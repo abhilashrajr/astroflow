@@ -1959,9 +1959,18 @@ Partial Class _Default
         Dim reader As New StreamReader(dataStream)
         Dim responseFromServer As String = reader.ReadToEnd()
         If responseFromServer = "0" Then
-            MsgBox("Login Failed")
+            ' MsgBox("Login Failed")
         Else
-            MsgBox(responseFromServer)
+            ' MsgBox(responseFromServer)
+
+
+
+
+
+
+
+
+
         End If
         reader.Close()
         dataStream.Close()
@@ -2016,37 +2025,54 @@ Partial Class _Default
     Protected Sub FindCoordinates(sender As Object, e As EventArgs) Handles TextBox7.TextChanged
 
         Dim url As String = "http://maps.google.com/maps/api/geocode/xml?address=" + TextBox7.Text + "&sensor=false"
-        Dim request As WebRequest = WebRequest.Create(url)
-        Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
-            Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                Dim dsResult As New DataSet()
-                dsResult.ReadXml(reader)
+
+        Try
+            Dim request As WebRequest = WebRequest.Create(url)
+            Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
+                Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+                    Dim dsResult As New DataSet()
+                    dsResult.ReadXml(reader)
 
 
 
-                Dim dtCoordinates As New DataTable()
+                    Dim dtCoordinates As New DataTable()
 
-                dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
+                    dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
 
-                For Each row As DataRow In dsResult.Tables("result").Rows
-                    Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + row("result_id").ToString())(0)("geometry_id").ToString()
-                    Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
+                    For Each row As DataRow In dsResult.Tables("result").Rows
+                        Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + row("result_id").ToString())(0)("geometry_id").ToString()
+                        Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
 
-                    ' TextBox1.Text = dsResult.Tables["lat"].ToString;
-                    ' TextBox2.Text = location["lng"];
+                        ' TextBox1.Text = dsResult.Tables["lat"].ToString;
+                        ' TextBox2.Text = location["lng"];
 
-                    dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
-                Next
-                GridView1.DataSource = dtCoordinates
-                GridView1.DataBind()
+                        dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
+                    Next
+                    GridView1.DataSource = dtCoordinates
+                    GridView1.DataBind()
 
-                tbllat1.Text = GridView1.Rows(0).Cells(2).Text
+                    tbllat1.Text = GridView1.Rows(0).Cells(2).Text
 
-                tbllong1.Text = GridView1.Rows(0).Cells(3).Text
+                    tbllong1.Text = GridView1.Rows(0).Cells(3).Text
+                    Label_Err.Visible = False
 
 
+                End Using
             End Using
-        End Using
+        Catch error_msg As Exception
+            If error_msg.Message.Contains("instance is not set") Then
+                'Check if you get error code then match error code
+
+
+                Label_Err.Visible = True
+            Else
+
+                Label_Err.Visible = True
+
+            End If
+        End Try
+
+
     End Sub
 
 
@@ -2071,37 +2097,52 @@ Partial Class _Default
     Protected Sub find_coordinates(sender As Object, e As EventArgs) Handles TextBox5.TextChanged
 
         Dim url As String = "http://maps.google.com/maps/api/geocode/xml?address=" + TextBox5.Text + "&sensor=false"
-        Dim request As WebRequest = WebRequest.Create(url)
-        Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
-            Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                Dim dsResult As New DataSet()
-                dsResult.ReadXml(reader)
+
+        Try
+            Dim request As WebRequest = WebRequest.Create(url)
+            Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
+                Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+                    Dim dsResult As New DataSet()
+                    dsResult.ReadXml(reader)
 
 
 
-                Dim dtCoordinates As New DataTable()
+                    Dim dtCoordinates As New DataTable()
 
-                dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
+                    dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
 
-                For Each row As DataRow In dsResult.Tables("result").Rows
-                    Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + row("result_id").ToString())(0)("geometry_id").ToString()
-                    Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
+                    For Each row As DataRow In dsResult.Tables("result").Rows
+                        Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + row("result_id").ToString())(0)("geometry_id").ToString()
+                        Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
 
-                    ' TextBox1.Text = dsResult.Tables["lat"].ToString;
-                    ' TextBox2.Text = location["lng"];
+                        ' TextBox1.Text = dsResult.Tables["lat"].ToString;
+                        ' TextBox2.Text = location["lng"];
 
-                    dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
-                Next
-                GridView2.DataSource = dtCoordinates
-                GridView2.DataBind()
+                        dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
+                    Next
+                    GridView2.DataSource = dtCoordinates
+                    GridView2.DataBind()
 
-                TextBox6.Text = GridView2.Rows(0).Cells(2).Text
+                    TextBox6.Text = GridView2.Rows(0).Cells(2).Text
 
-                TextBox8.Text = GridView2.Rows(0).Cells(3).Text
+                    TextBox8.Text = GridView2.Rows(0).Cells(3).Text
+                    LabelErr2.Visible = False
 
-
+                End Using
             End Using
-        End Using
+
+        Catch error_msg1 As Exception
+            If error_msg1.Message.Contains("instance is not set") Then
+                'Check if you get error code then match error code
+
+
+                LabelErr2.Visible = True
+            Else
+
+                LabelErr2.Visible = True
+
+            End If
+        End Try
 
     End Sub
 
